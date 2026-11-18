@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3b6cf6">
+<link rel="manifest" href="manifest.json">
+<title>وقتي – منظّم وقت الطالب</title>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--tx:#1b2438;--mu:#667089;--pr:#3b6cf6;--ok:#16a34a;--bad:#e11d48;--bd:#e2e8f3}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1524;--card:#182036;--tx:#e8edf8;--mu:#9aa5c0;--pr:#6b93ff;--bd:#2a3452}}
+:root[data-theme=dark]{--bg:#0f1524;--card:#182036;--tx:#e8edf8;--mu:#9aa5c0;--pr:#6b93ff;--bd:#2a3452}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Cairo,Tahoma,"Segoe UI",Arial,sans-serif;line-height:1.6;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+.w{max-width:900px;margin:auto;padding:16px}
+h1{margin:0;font-size:26px}h2{margin:0 0 10px;font-size:18px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-top:14px}
+.st{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:14px}
+.st div{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:10px;text-align:center}
+.st b{display:block;font-size:22px;color:var(--pr)}.st span{font-size:12px;color:var(--mu)}
+.bar{height:10px;background:var(--bd);border-radius:9px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .4s}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+label{font-size:13px;color:var(--mu);display:block}
+input,select{width:100%;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:10px 16px;background:var(--pr);color:#fff;font-weight:600}
+button.s{background:var(--bd);color:var(--tx)}button.x{background:none;color:var(--bad);padding:4px 8px}
+.row{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--bd);border-radius:12px;margin-top:8px}
+.row.d .t{text-decoration:line-through;opacity:.5}
+.row .t{flex:1;min-width:0}.row small{color:var(--mu);display:block}
+.p3{border-right:5px solid var(--bad)}.p2{border-right:5px solid #f59e0b}.p1{border-right:5px solid var(--ok)}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--ok)}
+.tm{text-align:center}.tm .n{font-size:56px;font-weight:700;direction:ltr}
+.em{color:var(--mu);text-align:center;padding:10px}
+.blk .h{direction:ltr;font-weight:700;color:var(--pr);min-width:110px;text-align:center}
+#al{display:none;background:#fff1f2;color:#be123c;border:1px solid #fecdd3;border-radius:12px;padding:10px;margin-top:14px;font-weight:600}
+.cb{display:flex;gap:8px;align-items:flex-end;height:140px}
+.c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:11px;color:var(--mu)}
+.c i{width:100%;background:var(--pr);border-radius:6px 6px 0 0;min-height:3px}
+</style>
+</head>
+<body>
+<div class="w">
+<div class="top"><div><h1>⏱️ وقتي</h1><small style="color:var(--mu)">نظّم مهامك وذاكر بذكاء</small></div><button class="s" id="th">🌓</button></div>
+<div id="al"></div>
+<div class="st"><div><b id="s1">0</b><span>منجزة النهارده</span></div><div><b id="s2">0</b><span>دقايق تركيز</span></div><div><b id="s3">0</b><span>مهام متبقية</span></div><div><b id="s4">0</b><span>🔥 أيام متتالية</span></div></div>
+<div class="card"><label>هدف التركيز اليومي (دقيقة)</label><input id="go" type="number" min="10" step="10"><div class="bar"><i id="gb"></i></div></div>
+
+<div class="card"><h2>➕ مهمة جديدة</h2>
+<div class="g">
+<div style="grid-column:1/-1"><label>المهمة</label><input id="ti" placeholder="مثال: حل تمارين الفيزياء"></div>
+<div><label>المادة</label><input id="su" list="sl" placeholder="رياضيات"><datalist id="sl"></datalist></div>
+<div><label>آخر موعد</label><input id="du" type="date"></div>
+<div><label>الوقت المتوقع (دقيقة)</label><input id="mi" type="number" min="5" step="5" value="45"></div>
+<div><label>الأهمية</label><select id="pr"><option value="3">عالية</option><option value="2" selected>متوسطة</option><option value="1">منخفضة</option></select></div>
+</div><div style="margin-top:12px"><button id="add">إضافة المهمة</button></div></div>
+
+<div class="card"><h2>🧠 خطة اليوم الذكية</h2>
+<div class="g"><div><label>ساعات المذاكرة المتاحة</label><input id="hr" type="number" min="0.5" max="12" step="0.5"></div>
+<div><label>وقت البداية</label><input id="sa" type="time"></div>
+<div style="align-self:end"><button id="gen" style="width:100%">ولّد خطتي</button></div></div>
+<div id="plan"></div></div>
+
+<div class="card tm"><h2>🍅 مؤقت التركيز</h2>
+<div class="g" style="text-align:right"><div><label>المهمة</label><select id="tt"></select></div><div><label>مدة التركيز</label><select id="ln"><option>15</option><option>25</option><option>45</option><option>50</option></select></div></div>
+<div id="tl" style="color:var(--mu);margin-top:8px">تركيز</div><div class="n" id="tn">25:00</div>
+<div style="display:flex;gap:8px;justify-content:center"><button id="ts">ابدأ</button><button class="s" id="tr">إعادة</button></div></div>
+
+<div class="card"><h2>📊 تركيزك آخر 7 أيام (دقيقة)</h2><div class="cb" id="ch"></div></div>
+<div class="card"><h2>📋 كل المهام</h2><div id="list"></div></div>
+<div class="card"><h2>💾 نسخة احتياطية</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="s" id="bk">نسخ بياناتي</button><button class="s" id="rs">استعادة بيانات</button><button class="s" id="cl">مسح الكل</button></div></div>
+</div>
+<script>
+const $=s=>document.querySelector(s),pad=n=>String(n).padStart(2,'0');
+const def=()=>({tasks:[],focus:{},hours:3,start:'16:00',goal:120,len:25});
+let S;try{S={...def(),...JSON.parse(localStorage.getItem('waqti'))}}catch(e){S=def()}
+const save=()=>{try{localStorage.setItem('waqti',JSON.stringify(S))}catch(e){}};
+const dk=o=>{const d=new Date();d.setDate(d.getDate()-o);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())},td=()=>dk(0);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const left=t=>t.due?Math.round((new Date(t.due)-new Date(td()))/864e5):7;
+const score=t=>t.pr*3+(left(t)<0?10:Math.max(0,8-left(t)));
+const dl=t=>{if(!t.due)return'بدون موعد';const d=left(t);return d<0?'⚠️ متأخرة':d==0?'النهارده':d==1?'بكرة':'بعد '+d+' يوم'};
+const tf=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);
+function streak(){const a=new Set([...Object.keys(S.focus).filter(k=>S.focus[k]>0),...S.tasks.filter(t=>t.doneOn).map(t=>t.doneOn)]);let i=a.has(dk(0))?0:1,n=0;while(a.has(dk(i))){n++;i++}return n}
+function render(){
+ const done=S.tasks.filter(t=>t.done),pend=S.tasks.filter(t=>!t.done).sort((a,b)=>score(b)-score(a)),f=S.focus[td()]||0;
+ $('#s1').textContent=S.tasks.filter(t=>t.doneOn==td()).length;$('#s2').textContent=f;$('#s3').textContent=pend.length;$('#s4').textContent=streak();
+ $('#gb').style.width=Math.min(100,f/(S.goal||120)*100)+'%';
+ const late=pend.filter(t=>left(t)<0).length,now=pend.filter(t=>left(t)==0).length;
+ $('#al').style.display=late||now?'block':'none';$('#al').textContent=(late?'⚠️ عندك '+late+' مهمة متأخرة. ':'')+(now?'📌 '+now+' مهمة موعدها النهارده.':'');
+ $('#list').innerHTML=S.tasks.length?[...pend,...done].map(t=>`<div class="row p${t.pr} ${t.done?'d':''}"><input type="checkbox" ${t.done?'checked':''} onchange="tog(${t.id})"><div class="t"><b>${esc(t.title)}</b><small>${esc(t.su||'عام')} • ${t.min} دقيقة • ${dl(t)}${t.spent?' • ذاكرت '+t.spent+' د':''}</small></div><button class="x" onclick="del(${t.id})">🗑</button></div>`).join(''):'<div class="em">لسه مفيش مهام. ضيف أول مهمة! 👆</div>';
+ $('#sl').innerHTML=[...new Set(S.tasks.map(t=>t.su).filter(Boolean))].map(s=>`<option value="${esc(s)}">`).join('');
+ const cur=T.task;$('#tt').innerHTML='<option value="">بدون مهمة محددة</option>'+pend.map(t=>`<option value="${t.id}" ${t.id==cur?'selected':''}>${esc(t.title)}</option>`).join('');
+ const ds=[6,5,4,3,2,1,0].map(o=>[S.focus[dk(o)]||0,new Date(dk(o)+'T12:00:00').toLocaleDateString('ar-EG',{weekday:'short'})]),mx=Math.max(30,...ds.map(d=>d[0]));
+ $('#ch').innerHTML=ds.map(d=>`<div class="c"><span>${d[0]}</span><i style="height:${d[0]/mx*80}%"></i><span>${d[1]}</span></div>`).join('');
+}
+function tog(id){const t=S.tasks.find(x=>x.id==id);t.done=!t.done;t.doneOn=t.done?td():null;save();render()}
+function del(id){S.tasks=S.tasks.filter(x=>x.id!=id);save();render();$('#plan').innerHTML=''}
+$('#add').onclick=()=>{const ti=$('#ti').value.trim();if(!ti){$('#ti').focus();return}
+ S.tasks.push({id:Date.now(),title:ti,su:$('#su').value.trim(),due:$('#du').value,min:+$('#mi').value||30,pr:+$('#pr').value,done:false});
+ $('#ti').value='';save();render()};
+$('#go').value=S.goal;$('#go').onchange=()=>{S.goal=+$('#go').value||120;save();render()};
+$('#hr').value=S.hours;$('#sa').value=S.start;
+$('#gen').onclick=()=>{
+ S.hours=+$('#hr').value||3;S.start=$('#sa').value||'16:00';save();
+ const pend=S.tasks.filter(t=>!t.done).sort((a,b)=>score(b)-score(a));
+ if(!pend.length){$('#plan').innerHTML='<div class="em">مفيش مهام متبقية، استمتع بوقتك 🎉</div>';return}
+ let bud=S.hours*60,[h,m]=S.start.split(':').map(Number),cur=h*60+m,out='';
+ for(const t of pend){if(bud<15)break;const d=Math.min(t.min,bud);
+  out+=`<div class="row blk p${t.pr}"><div class="h">${tf(cur)} – ${tf(cur+d)}</div><div class="t"><b>${esc(t.title)}</b><small>${esc(t.su||'عام')} • ${d<t.min?'جزء من المهمة':dl(t)}</small></div></div>`;
+  cur+=d+10;bud-=d}
+ $('#plan').innerHTML=out+'<small style="color:var(--mu);display:block;margin-top:8px">راحة 10 دقايق بين كل مهمة. الترتيب حسب الأهمية والموعد.</small>'};
+let T={mode:'f',s:S.len*60,iv:null,task:''};
+const brk=()=>S.len>=45?600:300;
+const upd=()=>{$('#tn').textContent=pad(Math.floor(T.s/60))+':'+pad(T.s%60);$('#tl').textContent=T.mode=='f'?'تركيز':'راحة';$('#ts').textContent=T.iv?'إيقاف مؤقت':'ابدأ'};
+function beep(){try{const a=new AudioContext(),o=a.createOscillator();o.connect(a.destination);o.start();setTimeout(()=>o.stop(),500);navigator.vibrate&&navigator.vibrate(300)}catch(e){}}
+$('#ln').value=S.len;
+$('#ln').onchange=()=>{S.len=+$('#ln').value;save();$('#tr').onclick()};
+$('#tt').onchange=()=>{T.task=$('#tt').value};
+$('#ts').onclick=()=>{if(T.iv){clearInterval(T.iv);T.iv=null}else T.iv=setInterval(()=>{T.s--;
+ if(T.s<=0){beep();if(T.mode=='f'){S.focus[td()]=(S.focus[td()]||0)+S.len;const t=S.tasks.find(x=>x.id==T.task);if(t)t.spent=(t.spent||0)+S.len;save();render()}
+  T.mode=T.mode=='f'?'b':'f';T.s=T.mode=='f'?S.len*60:brk()}upd()},1000);upd()};
+$('#tr').onclick=()=>{clearInterval(T.iv);T={mode:'f',s:S.len*60,iv:null,task:T.task};upd()};
+$('#th').onclick=()=>{const r=document.documentElement;r.dataset.theme=(r.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'))=='dark'?'light':'dark'};
+$('#bk').onclick=async()=>{const j=JSON.stringify(S);try{await navigator.clipboard.writeText(j);alert('تم نسخ بياناتك. الصقها في ملاحظة للاحتفاظ بها.')}catch(e){prompt('انسخ البيانات:',j)}};
+$('#rs').onclick=()=>{const j=prompt('الصق بياناتك هنا:');if(!j)return;try{const d=JSON.parse(j);if(!Array.isArray(d.tasks))throw 0;S={...def(),...d};save();render();alert('تمت الاستعادة ✅')}catch(e){alert('البيانات غير صالحة')}};
+$('#cl').onclick=()=>{if(confirm('هتمسح كل المهام والإحصائيات؟')){S=def();save();render();upd()}};
+try{if(location.protocol.startsWith('http')&&navigator.serviceWorker)navigator.serviceWorker.register('sw.js')}catch(e){}
+render();upd();
+</script>
+</body>
+</html>
